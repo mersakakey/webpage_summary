@@ -15,7 +15,7 @@ class Summarize:
     )
 
   def predict(_self, document):
-    max_tokens:int = 400
+    max_tokens:int = 400 # 分割長
 
     text_splitter = TokenTextSplitter(chunk_size=max_tokens, chunk_overlap=0)
 
@@ -40,6 +40,6 @@ class Summarize:
 
     summary_chain = load_summarize_chain(_self.llm, chain_type="map_reduce", map_prompt = promptSubject)
 
-    subject = summary_chain.run(text_splitter.create_documents([document]))
+    summarize_result = summary_chain.run(text_splitter.create_documents([document]))
 
-    return subject
+    return summarize_result

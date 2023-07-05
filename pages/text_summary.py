@@ -1,6 +1,5 @@
 import streamlit as st
 from summarize import Summarize
-from get_html import get_html
 
 with st.sidebar:
   openai_api_key = st.text_input('OpenAI API Key')

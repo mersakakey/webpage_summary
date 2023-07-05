@@ -21,5 +21,6 @@ if submitted:
     summarize = Summarize(openai_api_key, transcription_temperature = summary_temperature)
 
     output = summarize.predict(get_html(webpage_url))
+    print(output)
     st.write(output)
 

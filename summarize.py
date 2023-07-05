@@ -15,19 +15,31 @@ class Summarize:
     )
 
   def predict(_self, document):
-    max_tokens:int = 40
+    max_tokens:int = 400
 
-    text_splitter = TokenTextSplitter(chunk_size=max_tokens, chunk_overlap=20)
+    text_splitter = TokenTextSplitter(chunk_size=max_tokens, chunk_overlap=0)
 
-    summary_chain = load_summarize_chain(_self.llm, chain_type="map_reduce")
+    promptSubject = PromptTemplate(input_variables=["text"], template="""
+#命令書
+あなたはプロの編集者です。以下の制約条件に従って、入力する文章を要約してください。
 
-    promptSubject = PromptTemplate(input_variables=["text"], template="""以下の文章について、簡潔に要約してください:
+#制約条件
+・日本語で出力する。
+・箇条書きで出力する。
+・重要なキーワードを取りこぼさない。
+・文章の意味を変更しない。
+・架空の表現や言葉を使用しない。
+・文章中の数値には変更を加えない。
 
+#入力する文章
 "{text}"
-""")
-    chainSubject = LLMChain(llm=_self.llm, prompt=promptSubject)
 
-    overall_chain_map_reduce = SimpleSequentialChain(chains=[summary_chain, chainSubject])
-    subject = overall_chain_map_reduce.run(text_splitter.create_documents([document]))
+#出力形式
+要約した文章:
+""")
+
+    summary_chain = load_summarize_chain(_self.llm, chain_type="map_reduce", map_prompt = promptSubject)
+
+    subject = summary_chain.run(text_splitter.create_documents([document]))
 
     return subject
